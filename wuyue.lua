@@ -692,6 +692,39 @@ local teleportPoints = {
 	{ "神话健身房",     CFrame.new(2177, 13, 1070) },
 	{ "冰霜健身房",     CFrame.new(-2543, 13, -410) },
 }
-
 local teleBtn
-teleBtn = createBut
+teleBtn = createButton("传送 ▾", function()
+	teleportOpen = not teleportOpen
+	if teleportOpen then
+		teleBtn.Text = "传送 ▴"
+		teleBtn.TextColor3 = THEME.Accent
+		for _, b in ipairs(teleportList) do
+			b.Visible = true
+		end
+	else
+		teleBtn.Text = "传送 ▾"
+		teleBtn.TextColor3 = THEME.Text
+		for _, b in ipairs(teleportList) do
+			b.Visible = false
+		end
+	end
+end)
+
+for _, point in ipairs(teleportPoints) do
+	local name, cf = point[1], point[2]
+	local btn = createButton("  → " .. name, function()
+		local char = LocalPlayer.Character
+		if char and char:FindFirstChild("HumanoidRootPart") then
+			char.HumanoidRootPart.CFrame = cf
+		end
+	end)
+	btn.Visible = false
+	table.insert(teleportList, btn)
+end
+
+-- 关闭脚本
+createButton("关闭脚本", function()
+	ScreenGui:Destroy()
+end)
+
+print("[五月] 加载完成 — 点击悬浮球打开菜单")
