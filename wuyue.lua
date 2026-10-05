@@ -429,11 +429,20 @@ Divider.BackgroundColor3 = THEME.Divider
 Divider.BorderSizePixel = 0
 Divider.Parent = Main
 
-local ButtonHolder = Instance.new("Frame")
+-- ============================================
+--  可滚动按钮容器
+-- ============================================
+local ButtonHolder = Instance.new("ScrollingFrame")
 ButtonHolder.Name = "ButtonHolder"
 ButtonHolder.Size = UDim2.new(1, -28, 1, -60)
 ButtonHolder.Position = UDim2.new(0, 14, 0, 50)
 ButtonHolder.BackgroundTransparency = 1
+ButtonHolder.BorderSizePixel = 0
+ButtonHolder.ScrollBarThickness = 4
+ButtonHolder.ScrollBarImageColor3 = THEME.Accent
+ButtonHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+ButtonHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
+ButtonHolder.ScrollingDirection = Enum.ScrollingDirection.Y
 ButtonHolder.Parent = Main
 
 local UIListLayout = Instance.new("UIListLayout")
@@ -685,38 +694,4 @@ local teleportPoints = {
 }
 
 local teleBtn
-teleBtn = createButton("传送 ▾", function()
-	teleportOpen = not teleportOpen
-	if teleportOpen then
-		teleBtn.Text = "传送 ▴"
-		teleBtn.TextColor3 = THEME.Accent
-		for _, b in ipairs(teleportList) do
-			b.Visible = true
-		end
-	else
-		teleBtn.Text = "传送 ▾"
-		teleBtn.TextColor3 = THEME.Text
-		for _, b in ipairs(teleportList) do
-			b.Visible = false
-		end
-	end
-end)
-
-for _, point in ipairs(teleportPoints) do
-	local name, cf = point[1], point[2]
-	local btn = createButton("  → " .. name, function()
-		local char = LocalPlayer.Character
-		if char and char:FindFirstChild("HumanoidRootPart") then
-			char.HumanoidRootPart.CFrame = cf
-		end
-	end)
-	btn.Visible = false
-	table.insert(teleportList, btn)
-end
-
--- 关闭脚本
-createButton("关闭脚本", function()
-	ScreenGui:Destroy()
-end)
-
-print("[五月] 加载完成 — 点击悬浮球打开菜单")
+teleBtn = createBut
