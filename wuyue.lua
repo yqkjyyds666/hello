@@ -684,14 +684,14 @@ local teleportList = {}
 
 local teleportPoints = {
 	{ "出生点",         CFrame.new(7, 3, 108) },
-	{ "安全岛",         CFrame.new(-39, 10, 1838) },
+	{ "安全鸟",         CFrame.new(-39, 10, 1838) },
 	{ "幸运抽奖区",     CFrame.new(-2606, -2, 5753) },
 	{ "肌肉之王健身房", CFrame.new(-8554, 22, -5642) },
 	{ "传说健身房",     CFrame.new(4676, 997, -3915) },
 	{ "永恒健身房",     CFrame.new(-6686, 13, -1284) },
 	{ "神话健身房",     CFrame.new(2177, 13, 1070) },
 	{ "冰霜健身房",     CFrame.new(-2543, 13, -410) },
-	}
+}
 
 local teleBtn
 teleBtn = createButton("传送 ▾", function()
