@@ -676,9 +676,6 @@ atylBtn = createButton("自动举哑铃 [关]", function()
 	end
 end)
 
--- ============================================
---  传送分组
--- ============================================
 local teleportOpen = false
 local teleportList = {}
 
