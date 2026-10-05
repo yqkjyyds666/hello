@@ -676,6 +676,9 @@ atylBtn = createButton("自动举哑铃 [关]", function()
 	end
 end)
 
+-- ============================================
+--  传送分组
+-- ============================================
 local teleportOpen = false
 local teleportList = {}
 
@@ -688,7 +691,7 @@ local teleportPoints = {
 	{ "永恒健身房",     CFrame.new(-6686, 13, -1284) },
 	{ "神话健身房",     CFrame.new(2177, 13, 1070) },
 	{ "冰霜健身房",     CFrame.new(-2543, 13, -410) },
-}
+	{ "过载健身房",     CFrame.new(-3063, 16,165,4942）},}
 local teleBtn
 teleBtn = createButton("传送 ▾", function()
 	teleportOpen = not teleportOpen
