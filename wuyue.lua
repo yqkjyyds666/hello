@@ -692,6 +692,7 @@ local teleportPoints = {
 	{ "神话健身房",     CFrame.new(2177, 13, 1070) },
 	{ "冰霜健身房",     CFrame.new(-2543, 13, -410) },
 	}
+
 local teleBtn
 teleBtn = createButton("传送 ▾", function()
 	teleportOpen = not teleportOpen
