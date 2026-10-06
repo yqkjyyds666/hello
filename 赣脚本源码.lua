@@ -1,5 +1,5 @@
 -- ============================================================
---  赣脚本V2  ——  卡密验证 + 加载动画 + 面板
+--  赣脚本V2  ——  卡密验证 + 加载动画 + 音乐 + 面板
 -- ============================================================
 
 local UserInputService = game:GetService("UserInputService")
@@ -134,8 +134,29 @@ while not passed do
 end
 
 -- ============================================================
---  一、加载动画
+--  一、加载动画 + 背景音乐
 -- ============================================================
+
+-- 背景音乐（不阻塞加载动画）
+local musicSound = nil
+task.spawn(function()
+    local ok, err = pcall(function()
+        local music = game:HttpGet("https://raw.githubusercontent.com/renlua/music/refs/heads/main/%E8%B5%B7%E9%A3%8E%E4%BA%86.mp3")
+        writefile("music.mp3", music)
+        local Getmusic = getsynasset("music.mp3")
+
+        musicSound = Instance.new("Sound")
+        musicSound.Name = "MayMusic"
+        musicSound.SoundId = Getmusic
+        musicSound.Volume = 1
+        musicSound.Looped = false
+        musicSound.Parent = SoundService
+        musicSound:Play()
+    end)
+    if not ok then
+        warn("音乐加载失败：", err)
+    end
+end)
 
 local sg = Instance.new("ScreenGui")
 sg.Name = "ScriptIntro"
@@ -171,7 +192,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 60)
 title.Position = UDim2.new(0, 0, 0, 30)
 title.BackgroundTransparency = 1
-title.Text = "赣脚本V2"
+title.Text = "五月脚本"
 title.TextColor3 = Color3.fromRGB(0, 220, 255)
 title.Font = Enum.Font.Gotham
 title.TextSize = 42
@@ -225,28 +246,30 @@ TweenService:Create(barBg, fadeOut, {BackgroundTransparency = 1}):Play()
 task.wait(0.7)
 sg:Destroy()
 
+-- 音乐淡出
+if musicSound then
+    TweenService:Create(musicSound, TweenInfo.new(1), {Volume = 0}):Play()
+    task.wait(1)
+    musicSound:Stop()
+    musicSound:Destroy()
+end
+
 -- ============================================================
 --  二、library 面板（关于 / 通用 / 范围 / 旋转 / 力量传奇）
 -- ============================================================
 
 local library = loadstring(game:HttpGet("https://pastebin.com/raw/3vQbADjh", true))()
-local window = library:new("赣脚本V2")
+local window = library:new("五月很帅")
 
 ------------------------------------------------------------
 --  关于
 ------------------------------------------------------------
 local creds = window:Tab("关于", "")
 local bin = creds:section("信息", true)
-bin:Label("半缝合")
 bin:Label("五月制作最新版本")
-bin:Label("")
-bin:Label("")
 bin:Label("感谢支持我")
 bin:Label("会努力更新的")
 bin:Label("也感谢帮我的人")
-bin:Label("作者")
-bin:Label("")
-
 local credits = creds:section("UI设置", true)
 
 credits:Toggle("移除UI辉光", "", false, function(state)
