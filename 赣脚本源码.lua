@@ -624,7 +624,6 @@ end)
 local creds = window:Tab("力量传奇", "6035145364")
 local credits = creds:section("力量传奇功能", true)
 
--- 自动重生
 credits:Toggle("自动重生", "ATRE", false, function(ATRE)
     while ATRE do
         wait(0.1)
@@ -632,7 +631,6 @@ credits:Toggle("自动重生", "ATRE", false, function(ATRE)
     end
 end)
 
--- 自动举哑铃（可关闭）
 local atylPart = nil
 local atylRunning = false
 
@@ -688,7 +686,6 @@ credits:Toggle("自动举哑铃", "ATYL", false, function(ATYL)
     end
 end)
 
--- 传送
 credits:Button("传送到出生点", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(7, 3, 108)
 end)
