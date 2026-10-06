@@ -1,3 +1,6 @@
+好，下面是完整覆盖版：主面板高度从 420 调小到 320，并同步调整位置让面板居中。
+
+```lua
 -- ============================================================
 --  五月力量传奇  ——  卡密 + 加载 + 悬浮窗 + 全功能
 -- ============================================================
@@ -368,10 +371,13 @@ Ball.MouseLeave:Connect(function()
 	Ball.BackgroundColor3 = BALL_CONFIG.BgColor
 end)
 
+-- ============================================
+--  主面板（高度已调小）
+-- ============================================
 local Main = Instance.new("Frame")
 Main.Name = "Main"
-Main.Size = UDim2.new(0, 320, 0, 420)
-Main.Position = UDim2.new(0.5, -160, 0.5, -210)
+Main.Size = UDim2.new(0, 320, 0, 320)          -- 420 → 320
+Main.Position = UDim2.new(0.5, -160, 0.5, -160) -- -210 → -160
 Main.BackgroundColor3 = THEME.Bg
 Main.BackgroundTransparency = THEME.BgTrans
 Main.BorderSizePixel = 0
@@ -819,7 +825,7 @@ createButton("🚀 飞行", function()
 end)
 
 -- ============================================
---  飞行 V3（新）
+--  飞行 V3
 -- ============================================
 createButton("🚀 飞行 V3", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/odhdshhe/-V3.0/refs/heads/main/%E9%A3%9E%E8%A1%8C%E8%84%9A%E6%9C%ACV3(%E5%85%A8%E6%B8%B8%E6%88%8F%E9%80%9A%E7%94%A8)%20(1).txt"))()
@@ -840,7 +846,7 @@ createButton("👻 汉化穿墙", function()
 end)
 
 -- ============================================
---  透视（重写干净版）
+--  透视
 -- ============================================
 local espEnabled = false
 local espConns = {}
@@ -925,4 +931,8 @@ end)
 -- ============================================
 --  传送分组
 -- ============================================
-local tele
+local teleportOpen = false
+local teleportList = {}
+
+local teleportPoints = {
+	{
