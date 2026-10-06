@@ -137,7 +137,6 @@ end
 --  一、加载动画 + 背景音乐
 -- ============================================================
 
--- 背景音乐（不阻塞加载动画）
 local musicSound = nil
 task.spawn(function()
     local ok, err = pcall(function()
@@ -192,7 +191,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 60)
 title.Position = UDim2.new(0, 0, 0, 30)
 title.BackgroundTransparency = 1
-title.Text = "五月脚本"
+title.Text = "赣脚本V2"
 title.TextColor3 = Color3.fromRGB(0, 220, 255)
 title.Font = Enum.Font.Gotham
 title.TextSize = 42
@@ -246,7 +245,6 @@ TweenService:Create(barBg, fadeOut, {BackgroundTransparency = 1}):Play()
 task.wait(0.7)
 sg:Destroy()
 
--- 音乐淡出
 if musicSound then
     TweenService:Create(musicSound, TweenInfo.new(1), {Volume = 0}):Play()
     task.wait(1)
@@ -255,21 +253,27 @@ if musicSound then
 end
 
 -- ============================================================
---  二、library 面板（关于 / 通用 / 范围 / 旋转 / 力量传奇）
+--  二、library 面板
 -- ============================================================
 
 local library = loadstring(game:HttpGet("https://pastebin.com/raw/3vQbADjh", true))()
-local window = library:new("五月很帅")
+local window = library:new("赣脚本V2")
 
 ------------------------------------------------------------
 --  关于
 ------------------------------------------------------------
 local creds = window:Tab("关于", "")
 local bin = creds:section("信息", true)
+bin:Label("半缝合")
 bin:Label("五月制作最新版本")
+bin:Label("")
+bin:Label("")
 bin:Label("感谢支持我")
 bin:Label("会努力更新的")
 bin:Label("也感谢帮我的人")
+bin:Label("作者")
+bin:Label("")
+
 local credits = creds:section("UI设置", true)
 
 credits:Toggle("移除UI辉光", "", false, function(state)
@@ -719,4 +723,93 @@ end)
 
 credits:Button("传送到过载健身房", function()
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-3063, 165, 4942)
+end)
+
+------------------------------------------------------------
+--  彩虹朋友
+------------------------------------------------------------
+local creds = window:Tab("彩虹朋友", "6035145364")
+local tab = creds:section("彩虹朋友功能", true)
+
+-- 自动收集
+tab:Button("自动收集", function()
+    local attempts = 0
+    for i, v in pairs(game:GetService("Workspace"):GetChildren()) do
+        if v:FindFirstChild("TouchTrigger") and attempts < 10 then
+            attempts = attempts + 1
+            pcall(function()
+                firetouchinterest(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, v.TouchTrigger, 0)
+            end)
+        end
+    end
+end)
+
+-- 自动放置
+tab:Button("自动放置", function()
+    local trigger = game:GetService("Workspace").GroupBuildStructures:FindFirstChild("Trigger", true)
+    if trigger then
+        pcall(function()
+            firetouchinterest(trigger, game.Players.LocalPlayer.Character.HumanoidRootPart, 0)
+            task.wait()
+            firetouchinterest(trigger, game.Players.LocalPlayer.Character.HumanoidRootPart, 1)
+        end)
+    end
+end)
+
+-- 怪物透视
+local monsterEvent = nil
+tab:Toggle("怪物透视", false, function(bool)
+    if bool then
+        local runService = game:GetService("RunService")
+        monsterEvent = runService.RenderStepped:Connect(function()
+            local monsters = game:GetService("Workspace"):FindFirstChild("Monsters")
+            if monsters then
+                for _, v in pairs(monsters:GetChildren()) do
+                    if not v:FindFirstChild("Lol") then
+                        local esp = Instance.new("Highlight", v)
+                        esp.Name = "Lol"
+                        esp.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        esp.FillColor = Color3.new(0, 0, 255)
+                    end
+                end
+            end
+        end)
+    else
+        if monsterEvent then monsterEvent:Disconnect() end
+        local monsters = game:GetService("Workspace"):FindFirstChild("Monsters")
+        if monsters then
+            for _, v in pairs(monsters:GetChildren()) do
+                if v:FindFirstChild("Lol") then
+                    v:FindFirstChild("Lol"):Destroy()
+                end
+            end
+        end
+    end
+end)
+
+-- 物品透视
+local itemEvent = nil
+tab:Toggle("物品透视", false, function(bool)
+    if bool then
+        local runService = game:GetService("RunService")
+        itemEvent = runService.RenderStepped:Connect(function()
+            for _, v in pairs(game:GetService("Workspace"):GetChildren()) do
+                if v:FindFirstChild("TouchTrigger") then
+                    if not v:FindFirstChild("Lol") then
+                        local esp = Instance.new("Highlight", v)
+                        esp.Name = "Lol"
+                        esp.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        esp.FillColor = Color3.new(0, 255, 0)
+                    end
+                end
+            end
+        end)
+    else
+        if itemEvent then itemEvent:Disconnect() end
+        for _, v in pairs(game:GetService("Workspace"):GetChildren()) do
+            if v:FindFirstChild("TouchTrigger") and v:FindFirstChild("Lol") then
+                v:FindFirstChild("Lol"):Destroy()
+            end
+        end
+    end
 end)
