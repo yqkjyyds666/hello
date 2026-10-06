@@ -368,13 +368,11 @@ Ball.MouseLeave:Connect(function()
 	Ball.BackgroundColor3 = BALL_CONFIG.BgColor
 end)
 
--- ============================================
---  主面板（高度已调小）
--- ============================================
+-- 主面板（高度已调小）
 local Main = Instance.new("Frame")
 Main.Name = "Main"
-Main.Size = UDim2.new(0, 320, 0, 320)          -- 420 → 320
-Main.Position = UDim2.new(0.5, -160, 0.5, -160) -- -210 → -160
+Main.Size = UDim2.new(0, 320, 0, 320)
+Main.Position = UDim2.new(0.5, -160, 0.5, -160)
 Main.BackgroundColor3 = THEME.Bg
 Main.BackgroundTransparency = THEME.BgTrans
 Main.BorderSizePixel = 0
@@ -432,9 +430,7 @@ Divider.BackgroundColor3 = THEME.Divider
 Divider.BorderSizePixel = 0
 Divider.Parent = Main
 
--- ============================================
---  可滚动按钮容器
--- ============================================
+-- 可滚动按钮容器
 local ButtonHolder = Instance.new("ScrollingFrame")
 ButtonHolder.Name = "ButtonHolder"
 ButtonHolder.Size = UDim2.new(1, -28, 1, -60)
@@ -536,9 +532,7 @@ UserInputService.InputEnded:Connect(function(input)
 	end
 end)
 
--- ============================================
---  主面板拖拽（拖标题栏）
--- ============================================
+-- 主面板拖拽
 local dragging2 = false
 local dragStart2, startPos2
 
@@ -794,6 +788,217 @@ nvBtn = createButton("夜视 [关]", function()
 end)
 
 -- ============================================
+--  自杀
+-- ============================================
+createButton("自杀", function()
+	local char = LocalPlayer.Character
+	if char and char:FindFirstChildOfClass("Humanoid") then
+		char:FindFirstChildOfClass("Humanoid").Health = 0
+	end
+end)
+
+-- ============================================
+--  穿墙（Noclip）
+-- ============================================
+local noclipEnabled = false
+local noclipConn = nil
+
+local noclipBtn
+noclipBtn = createButton("穿墙 [关]", function()
+	noclipEnabled = not noclipEnabled
+
+	if noclipEnabled then
+		noclipBtn.Text = "穿墙 [开]"
+		noclipBtn.TextColor3 = THEME.Accent
+
+		noclipConn = RunService.Stepped:Connect(function()
+			if not noclipEnabled then
+				if noclipConn then noclipConn:Disconnect() end
+				return
+			end
+			local char = LocalPlayer.Character
+			if char then
+				for _, v in ipairs(char:GetDescendants()) do
+					if v:IsA("BasePart") then
+						v.CanCollide = false
+					end
+				end
+			end
+		end)
+	else
+		noclipBtn.Text = "穿墙 [关]"
+		noclipBtn.TextColor3 = THEME.Text
+		if noclipConn then noclipConn:Disconnect() end
+	end
+end)
+
+-- ============================================
+--  甩飞所有人（原「手电筒」功能，带保护）
+-- ============================================
+createButton("甩飞所有人", function()
+	local cam = workspace.CurrentCamera
+	local RS = game:GetService("ReplicatedStorage")
+
+	local Flashlight = RS:FindFirstChild("Flashlight")
+	if not Flashlight then
+		warn("ReplicatedStorage 里没有 Flashlight，该功能无法用")
+		return
+	end
+
+	local Clone = Flashlight:Clone()
+	Clone.Parent = workspace
+
+	local Brightness = 5
+	local Keybind = Enum.KeyCode.F
+	local UIS = UserInputService
+	local Toggle = false
+	local Mouse = LocalPlayer:GetMouse()
+	local TS = TweenService
+	local TI = TweenInfo.new(0.1, Enum.EasingStyle.Sine)
+
+	UIS.InputBegan:Connect(function(Input, p)
+		if p then return end
+		if Input.KeyCode == Keybind then
+			Toggle = not Toggle
+		end
+	end)
+
+	RunService.RenderStepped:Connect(function()
+		if Clone and Clone.Parent then
+			Clone.Position = cam.CFrame.Position
+			TS:Create(Clone, TI, {CFrame = CFrame.lookAt(Clone.Position, Mouse.Hit.Position)}):Play()
+
+			if Toggle then
+				TS:Create(Clone.SpotLight, TI, {Brightness = Brightness}):Play()
+			else
+				TS:Create(Clone.SpotLight, TI, {Brightness = 0}):Play()
+			end
+		end
+	end)
+end)
+
+-- ============================================
+--  点击传送
+-- ============================================
+createButton("点击传送", function()
+	local mouse = LocalPlayer:GetMouse()
+	local tool = Instance.new("Tool")
+	tool.RequiresHandle = false
+	tool.Name = "点击传送的位置"
+	tool.Activated:Connect(function()
+		local pos = mouse.Hit + Vector3.new(0, 2.5, 0)
+		pos = CFrame.new(pos.X, pos.Y, pos.Z)
+		local char = LocalPlayer.Character
+		if char and char:FindFirstChild("HumanoidRootPart") then
+			char.HumanoidRootPart.CFrame = pos
+		end
+	end)
+	tool.Parent = LocalPlayer.Backpack
+end)
+
+-- ============================================
+--  人物显示（加载外部 ESP）
+-- ============================================
+local espLoaded = false
+local espBtn
+espBtn = createButton("人物显示 [关]", function()
+	espLoaded = not espLoaded
+	if espLoaded then
+		espBtn.Text = "人物显示 [开]"
+		espBtn.TextColor3 = THEME.Accent
+
+		getgenv().enabled = true
+		getgenv().filluseteamcolor = true
+		getgenv().outlineuseteamcolor = true
+		getgenv().fillcolor = Color3.new(1, 0, 0)
+		getgenv().outlinecolor = Color3.new(1, 1, 1)
+		getgenv().filltrans = 0.5
+		getgenv().outlinetrans = 0.5
+
+		pcall(function()
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/Vcsk/RobloxScripts/main/Highlight-ESP.lua"))()
+		end)
+	else
+		espBtn.Text = "人物显示 [关]"
+		espBtn.TextColor3 = THEME.Text
+		getgenv().enabled = false
+	end
+end)
+
+-- ============================================
+--  ESP 显示名称（补的实现）
+-- ============================================
+local nameEspEnabled = false
+local nameEspList = {}
+
+local function clearNameESP()
+	for _, label in ipairs(nameEspList) do
+		if label and label.Parent then label:Destroy() end
+	end
+	nameEspList = {}
+end
+
+local nameEspBtn
+nameEspBtn = createButton("ESP 显示名称 [关]", function()
+	nameEspEnabled = not nameEspEnabled
+
+	if nameEspEnabled then
+		nameEspBtn.Text = "ESP 显示名称 [开]"
+		nameEspBtn.TextColor3 = THEME.Accent
+
+		clearNameESP()
+		for _, plr in ipairs(Players:GetPlayers()) do
+			if plr ~= LocalPlayer and plr.Character then
+				local head = plr.Character:FindFirstChild("Head")
+				if head then
+					local bb = Instance.new("BillboardGui")
+					bb.Size = UDim2.new(0, 100, 0, 30)
+					bb.StudsOffset = Vector3.new(0, 3, 0)
+					bb.AlwaysOnTop = true
+					bb.Parent = head
+
+					local txt = Instance.new("TextLabel")
+					txt.Size = UDim2.new(1, 0, 1, 0)
+					txt.BackgroundTransparency = 1
+					txt.Text = plr.Name
+					txt.TextColor3 = Color3.new(1, 0, 0)
+					txt.TextScaled = true
+					txt.Parent = bb
+
+					table.insert(nameEspList, bb)
+				end
+			end
+		end
+	else
+		nameEspBtn.Text = "ESP 显示名称 [关]"
+		nameEspBtn.TextColor3 = THEME.Text
+		clearNameESP()
+	end
+end)
+
+-- ============================================
+--  Dex 抓包
+-- ============================================
+createButton("Dex 抓包", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/XiaoFenHG/Dex-Explorer/refs/heads/main/Dex-Explorer.lua"))()
+end)
+
+-- ============================================
+--  汉化 spy
+-- ============================================
+createButton("汉化 Spy", function()
+	getgenv().Spy = "汉化Spy"
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/refs/heads/main/spy%E6%B1%89%E5%8C%96%20(1).txt"))()
+end)
+
+-- ============================================
+--  汉化 spy2
+-- ============================================
+createButton("汉化 Spy2", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/XiaoFenHG/Dex-Explorer/refs/heads/main/HanHuaSpy.lua"))()
+end)
+
+-- ============================================
 --  踏空行走
 -- ============================================
 createButton("踏空行走", function()
@@ -808,9 +1013,9 @@ createButton("无限跳", function()
 end)
 
 -- ============================================
---  穿墙
+--  穿墙（外链）
 -- ============================================
-createButton("👻 穿墙", function()
+createButton("👻 穿墙（外链）", function()
 	loadstring(game:HttpGet("https://pastebin.com/raw/jvyN5hT8"))()
 end)
 
@@ -836,7 +1041,7 @@ createButton("📓 死亡笔记", function()
 end)
 
 -- ============================================
---  汉化穿墙
+--  汉化穿墙（外链）
 -- ============================================
 createButton("👻 汉化穿墙", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/TtmScripter/OtherScript/main/Noclip"))()
@@ -911,17 +1116,17 @@ local function startESP()
 	end))
 end
 
-local espBtn
-espBtn = createButton("透视 [关]", function()
+local espBtn2
+espBtn2 = createButton("透视 [关]", function()
 	if espEnabled then
 		removeESP()
 		espEnabled = false
-		espBtn.Text = "透视 [关]"
-		espBtn.TextColor3 = THEME.Text
+		espBtn2.Text = "透视 [关]"
+		espBtn2.TextColor3 = THEME.Text
 	else
 		startESP()
-		espBtn.Text = "透视 [开]"
-		espBtn.TextColor3 = THEME.Accent
+		espBtn2.Text = "透视 [开]"
+		espBtn2.TextColor3 = THEME.Accent
 	end
 end)
 
