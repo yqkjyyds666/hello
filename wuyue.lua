@@ -761,13 +761,13 @@ end)
 --  空翻开关
 -- ============================================
 local flipBtn
-flipBtn = createButton("空翻 [关]", function()
+flipBtn = createButton("后空翻 [关]", function()
 	flipEnabled = not flipEnabled
 	if flipEnabled then
-		flipBtn.Text = "空翻 [开]"
+		flipBtn.Text = "后空翻 [开]"
 		flipBtn.TextColor3 = THEME.Accent
 	else
-		flipBtn.Text = "空翻 [关]"
+		flipBtn.Text = "后空翻 [关]"
 		flipBtn.TextColor3 = THEME.Text
 	end
 end)
