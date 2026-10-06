@@ -1,5 +1,5 @@
 -- ============================================================
---  五月力量传奇  ——  卡密 + 加载 + 悬浮窗 + 全功能
+--  五月力量传奇  ——  卡密 + 加载 + 悬浮窗 + 全功能 + 音乐
 -- ============================================================
 
 local TweenService = game:GetService("TweenService")
@@ -368,7 +368,7 @@ Ball.MouseLeave:Connect(function()
 	Ball.BackgroundColor3 = BALL_CONFIG.BgColor
 end)
 
--- 主面板（高度已调小）
+-- 主面板
 local Main = Instance.new("Frame")
 Main.Name = "Main"
 Main.Size = UDim2.new(0, 320, 0, 320)
@@ -788,6 +788,52 @@ nvBtn = createButton("夜视 [关]", function()
 end)
 
 -- ============================================
+--  背景音乐（播放/停止）
+-- ============================================
+local musicPlaying = false
+local musicSound = nil
+local musicBtn
+
+musicBtn = createButton("背景音乐 [关]", function()
+	if not musicPlaying then
+		-- 尝试下载并播放
+		local ok, err = pcall(function()
+			local music = game:HttpGet("https://raw.githubusercontent.com/renlua/music/refs/heads/main/%E8%B5%B7%E9%A3%8E%E4%BA%86.mp3")
+			writefile("music.mp3", music)
+			local Getmusic = getsynasset("music.mp3")
+
+			musicSound = Instance.new("Sound")
+			musicSound.Name = "MayMusic"
+			musicSound.SoundId = Getmusic
+			musicSound.Volume = 1
+			musicSound.Looped = true
+			musicSound.Parent = SoundService
+			musicSound:Play()
+		end)
+
+		if ok then
+			musicPlaying = true
+			musicBtn.Text = "背景音乐 [开]"
+			musicBtn.TextColor3 = THEME.Accent
+		else
+			warn("音乐加载失败：", err)
+			musicBtn.Text = "背景音乐 [失败]"
+			task.wait(1.5)
+			musicBtn.Text = "背景音乐 [关]"
+		end
+	else
+		if musicSound then
+			musicSound:Stop()
+			musicSound:Destroy()
+			musicSound = nil
+		end
+		musicPlaying = false
+		musicBtn.Text = "背景音乐 [关]"
+		musicBtn.TextColor3 = THEME.Text
+	end
+end)
+
+-- ============================================
 --  自杀
 -- ============================================
 createButton("自杀", function()
@@ -833,7 +879,7 @@ noclipBtn = createButton("穿墙 [关]", function()
 end)
 
 -- ============================================
---  甩飞所有人（原「手电筒」功能，带保护）
+--  甩飞所有人（原手电筒逻辑）
 -- ============================================
 createButton("甩飞所有人", function()
 	local cam = workspace.CurrentCamera
@@ -897,7 +943,7 @@ createButton("点击传送", function()
 end)
 
 -- ============================================
---  人物显示（加载外部 ESP）
+--  人物显示（外部 ESP）
 -- ============================================
 local espLoaded = false
 local espBtn
@@ -926,7 +972,7 @@ espBtn = createButton("人物显示 [关]", function()
 end)
 
 -- ============================================
---  ESP 显示名称（补的实现）
+--  ESP 显示名称
 -- ============================================
 local nameEspEnabled = false
 local nameEspList = {}
@@ -977,72 +1023,48 @@ nameEspBtn = createButton("ESP 显示名称 [关]", function()
 end)
 
 -- ============================================
---  Dex 抓包
+--  Dex / Spy
 -- ============================================
 createButton("Dex 抓包", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/XiaoFenHG/Dex-Explorer/refs/heads/main/Dex-Explorer.lua"))()
 end)
 
--- ============================================
---  汉化 spy
--- ============================================
 createButton("汉化 Spy", function()
 	getgenv().Spy = "汉化Spy"
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/refs/heads/main/spy%E6%B1%89%E5%8C%96%20(1).txt"))()
 end)
 
--- ============================================
---  汉化 spy2
--- ============================================
 createButton("汉化 Spy2", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/XiaoFenHG/Dex-Explorer/refs/heads/main/HanHuaSpy.lua"))()
 end)
 
 -- ============================================
---  踏空行走
+--  外链脚本
 -- ============================================
 createButton("踏空行走", function()
 	loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Float'))()
 end)
 
--- ============================================
---  无限跳
--- ============================================
 createButton("无限跳", function()
 	loadstring(game:HttpGet("https://pastebin.com/raw/V5PQy3y0", true))()
 end)
 
--- ============================================
---  穿墙（外链）
--- ============================================
 createButton("👻 穿墙（外链）", function()
 	loadstring(game:HttpGet("https://pastebin.com/raw/jvyN5hT8"))()
 end)
 
--- ============================================
---  飞行
--- ============================================
 createButton("🚀 飞行", function()
 	loadstring(game:HttpGet("https://pastebin.com/raw/U27yQRxS"))()
 end)
 
--- ============================================
---  飞行 V3
--- ============================================
 createButton("🚀 飞行 V3", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/odhdshhe/-V3.0/refs/heads/main/%E9%A3%9E%E8%A1%8C%E8%84%9A%E6%9C%ACV3(%E5%85%A8%E6%B8%B8%E6%88%8F%E9%80%9A%E7%94%A8)%20(1).txt"))()
 end)
 
--- ============================================
---  死亡笔记
--- ============================================
 createButton("📓 死亡笔记", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/dingding123hhh/tt/main/%E6%AD%BB%E4%BA%A1%E7%AC%94%E8%AE%B0%20(1).txt"))()
 end)
 
--- ============================================
---  汉化穿墙（外链）
--- ============================================
 createButton("👻 汉化穿墙", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/TtmScripter/OtherScript/main/Noclip"))()
 end)
