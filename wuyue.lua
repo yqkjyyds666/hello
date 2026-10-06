@@ -1,5 +1,5 @@
 -- ============================================================
---  五月力量传奇  ——  卡密 + 加载 + 悬浮窗 + 功能
+--  五月力量传奇  ——  卡密 + 加载 + 悬浮窗 + 功能 + 空翻
 -- ============================================================
 
 local TweenService = game:GetService("TweenService")
@@ -571,6 +571,87 @@ CloseBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ============================================
+--  空翻功能核心
+-- ============================================
+local flipEnabled = false
+local flipping = false
+local forwardBoost = 20
+
+local function performFlip()
+	if flipping then return end
+
+	local character = LocalPlayer.Character
+	if not character then return end
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+	local rootPart = character:FindFirstChild("HumanoidRootPart")
+	if not humanoid or not rootPart then return end
+
+	local camera = workspace.CurrentCamera
+	if not camera then return end
+
+	local isShiftLocked = LocalPlayer.DevEnableMouseLock
+		and UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter
+
+	local lookVector = isShiftLocked and camera.CFrame.LookVector or rootPart.CFrame.LookVector
+	lookVector = Vector3.new(lookVector.X, 0, lookVector.Z).Unit
+
+	local initialCFrame = rootPart.CFrame
+
+	humanoid.JumpPower = 60
+	humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+	rootPart.Velocity = Vector3.new(
+		lookVector.X * forwardBoost,
+		humanoid.JumpPower,
+		lookVector.Z * forwardBoost
+	)
+
+	flipping = true
+
+	local flipDuration = 0.6
+	local startTime = tick()
+	local connection
+
+	connection = RunService.RenderStepped:Connect(function()
+		if not flipping then
+			connection:Disconnect()
+			return
+		end
+
+		local elapsed = tick() - startTime
+
+		if elapsed < flipDuration then
+			local progress = elapsed / flipDuration
+			local rotationAngle = 360 * progress
+			local rotation = CFrame.Angles(math.rad(rotationAngle), 0, 0)
+			rootPart.CFrame = CFrame.new(rootPart.Position) * (initialCFrame.Rotation * rotation)
+		else
+			connection:Disconnect()
+			flipping = false
+
+			local currentPos = rootPart.Position
+			local lookAt = currentPos + (isShiftLocked and camera.CFrame.LookVector or initialCFrame.LookVector)
+			rootPart.CFrame = CFrame.new(currentPos, lookAt)
+			rootPart.Velocity = Vector3.new(0, rootPart.Velocity.Y, 0)
+		end
+	end)
+end
+
+UserInputService.JumpRequest:Connect(function()
+	if not flipEnabled then return end
+
+	local character = LocalPlayer.Character
+	if not character then return end
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+	if not humanoid then return end
+
+	local state = humanoid:GetState()
+	if state ~= Enum.HumanoidStateType.Jumping
+		and state ~= Enum.HumanoidStateType.Freefall then
+		performFlip()
+	end
+end)
+
+-- ============================================
 --  自动锻炼
 -- ============================================
 local training = false
@@ -596,7 +677,7 @@ trainingBtn = createButton("自动锻炼 [关]", function()
 end)
 
 -- ============================================
---  自动重生
+--  自动重生（间隔 0.1 秒）
 -- ============================================
 local rebirthing = false
 local rebirthBtn
@@ -612,7 +693,7 @@ rebirthBtn = createButton("自动重生 [关]", function()
 				pcall(function()
 					remote:InvokeServer(unpack(args))
 				end)
-				task.wait(0.2)
+				task.wait(0.1)
 			end
 		end)
 	else
@@ -677,6 +758,21 @@ atylBtn = createButton("自动举哑铃 [关]", function()
 end)
 
 -- ============================================
+--  空翻开关
+-- ============================================
+local flipBtn
+flipBtn = createButton("空翻 [关]", function()
+	flipEnabled = not flipEnabled
+	if flipEnabled then
+		flipBtn.Text = "空翻 [开]"
+		flipBtn.TextColor3 = THEME.Accent
+	else
+		flipBtn.Text = "空翻 [关]"
+		flipBtn.TextColor3 = THEME.Text
+	end
+end)
+
+-- ============================================
 --  传送分组
 -- ============================================
 local teleportOpen = false
@@ -691,6 +787,7 @@ local teleportPoints = {
 	{ "永恒健身房",     CFrame.new(-6686, 13, -1284) },
 	{ "神话健身房",     CFrame.new(2177, 13, 1070) },
 	{ "冰霜健身房",     CFrame.new(-2543, 13, -410) },
+	{ "过载健身房",     CFrame.new(-3063, 165, 4942) },
 }
 
 local teleBtn
