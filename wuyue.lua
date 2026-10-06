@@ -1,5 +1,5 @@
 -- ============================================================
---  五月力量传奇  ——  卡密 + 加载 + 悬浮窗 + 功能 + 空翻
+--  五月力量传奇  ——  卡密 + 加载 + 悬浮窗 + 全功能
 -- ============================================================
 
 local TweenService = game:GetService("TweenService")
@@ -761,68 +761,168 @@ end)
 --  空翻开关
 -- ============================================
 local flipBtn
-flipBtn = createButton("后空翻 [关]", function()
+flipBtn = createButton("空翻 [关]", function()
 	flipEnabled = not flipEnabled
 	if flipEnabled then
-		flipBtn.Text = "后空翻 [开]"
+		flipBtn.Text = "空翻 [开]"
 		flipBtn.TextColor3 = THEME.Accent
 	else
-		flipBtn.Text = "后空翻 [关]"
+		flipBtn.Text = "空翻 [关]"
 		flipBtn.TextColor3 = THEME.Text
+	end
+end)
+
+-- ============================================
+--  夜视
+-- ============================================
+local nightVision = false
+local nvBtn
+nvBtn = createButton("夜视 [关]", function()
+	nightVision = not nightVision
+	if nightVision then
+		nvBtn.Text = "夜视 [开]"
+		nvBtn.TextColor3 = THEME.Accent
+		game.Lighting.Ambient = Color3.new(1, 1, 1)
+	else
+		nvBtn.Text = "夜视 [关]"
+		nvBtn.TextColor3 = THEME.Text
+		game.Lighting.Ambient = Color3.new(0, 0, 0)
+	end
+end)
+
+-- ============================================
+--  踏空行走
+-- ============================================
+createButton("踏空行走", function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Float'))()
+end)
+
+-- ============================================
+--  无限跳
+-- ============================================
+createButton("无限跳", function()
+	loadstring(game:HttpGet("https://pastebin.com/raw/V5PQy3y0", true))()
+end)
+
+-- ============================================
+--  穿墙
+-- ============================================
+createButton("👻 穿墙", function()
+	loadstring(game:HttpGet("https://pastebin.com/raw/jvyN5hT8"))()
+end)
+
+-- ============================================
+--  飞行
+-- ============================================
+createButton("🚀 飞行", function()
+	loadstring(game:HttpGet("https://pastebin.com/raw/U27yQRxS"))()
+end)
+
+-- ============================================
+--  飞行 V3（新）
+-- ============================================
+createButton("🚀 飞行 V3", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/odhdshhe/-V3.0/refs/heads/main/%E9%A3%9E%E8%A1%8C%E8%84%9A%E6%9C%ACV3(%E5%85%A8%E6%B8%B8%E6%88%8F%E9%80%9A%E7%94%A8)%20(1).txt"))()
+end)
+
+-- ============================================
+--  死亡笔记
+-- ============================================
+createButton("📓 死亡笔记", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/dingding123hhh/tt/main/%E6%AD%BB%E4%BA%A1%E7%AC%94%E8%AE%B0%20(1).txt"))()
+end)
+
+-- ============================================
+--  汉化穿墙
+-- ============================================
+createButton("👻 汉化穿墙", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/TtmScripter/OtherScript/main/Noclip"))()
+end)
+
+-- ============================================
+--  透视（重写干净版）
+-- ============================================
+local espEnabled = false
+local espConns = {}
+
+local function removeESP()
+	for _, conn in ipairs(espConns) do
+		conn:Disconnect()
+	end
+	espConns = {}
+	for _, plr in ipairs(Players:GetPlayers()) do
+		if plr.Character then
+			local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
+			if hrp then
+				local h = hrp:FindFirstChild("Highlight")
+				if h then h:Destroy() end
+			end
+		end
+	end
+end
+
+local function applyESP(plr)
+	if not espEnabled then return end
+	if plr == LocalPlayer then return end
+	local char = plr.Character
+	if not char then return end
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if not hrp then return end
+	if hrp:FindFirstChild("Highlight") then return end
+
+	local h = Instance.new("Highlight")
+	h.Name = "Highlight"
+	h.Adornee = char
+	h.FillColor = Color3.fromRGB(0, 0, 255)
+	h.OutlineColor = Color3.fromRGB(0, 0, 255)
+	h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+	h.Parent = hrp
+end
+
+local function startESP()
+	espEnabled = true
+
+	for _, plr in ipairs(Players:GetPlayers()) do
+		applyESP(plr)
+		table.insert(espConns, plr.CharacterAdded:Connect(function()
+			task.wait(0.5)
+			applyESP(plr)
+		end))
+	end
+
+	table.insert(espConns, Players.PlayerAdded:Connect(function(plr)
+		plr.CharacterAdded:Connect(function()
+			task.wait(0.5)
+			applyESP(plr)
+		end)
+	end))
+
+	table.insert(espConns, Players.PlayerRemoving:Connect(function(plr)
+		if plr.Character then
+			local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
+			if hrp then
+				local h = hrp:FindFirstChild("Highlight")
+				if h then h:Destroy() end
+			end
+		end
+	end))
+end
+
+local espBtn
+espBtn = createButton("透视 [关]", function()
+	if espEnabled then
+		removeESP()
+		espEnabled = false
+		espBtn.Text = "透视 [关]"
+		espBtn.TextColor3 = THEME.Text
+	else
+		startESP()
+		espBtn.Text = "透视 [开]"
+		espBtn.TextColor3 = THEME.Accent
 	end
 end)
 
 -- ============================================
 --  传送分组
 -- ============================================
-local teleportOpen = false
-local teleportList = {}
-
-local teleportPoints = {
-	{ "出生点",         CFrame.new(7, 3, 108) },
-	{ "安全岛",         CFrame.new(-39, 10, 1838) },
-	{ "幸运抽奖区",     CFrame.new(-2606, -2, 5753) },
-	{ "肌肉之王健身房", CFrame.new(-8554, 22, -5642) },
-	{ "传说健身房",     CFrame.new(4676, 997, -3915) },
-	{ "永恒健身房",     CFrame.new(-6686, 13, -1284) },
-	{ "神话健身房",     CFrame.new(2177, 13, 1070) },
-	{ "冰霜健身房",     CFrame.new(-2543, 13, -410) },
-	{ "过载健身房",     CFrame.new(-3063, 165, 4942) },
-}
-
-local teleBtn
-teleBtn = createButton("传送 ▾", function()
-	teleportOpen = not teleportOpen
-	if teleportOpen then
-		teleBtn.Text = "传送 ▴"
-		teleBtn.TextColor3 = THEME.Accent
-		for _, b in ipairs(teleportList) do
-			b.Visible = true
-		end
-	else
-		teleBtn.Text = "传送 ▾"
-		teleBtn.TextColor3 = THEME.Text
-		for _, b in ipairs(teleportList) do
-			b.Visible = false
-		end
-	end
-end)
-
-for _, point in ipairs(teleportPoints) do
-	local name, cf = point[1], point[2]
-	local btn = createButton("  → " .. name, function()
-		local char = LocalPlayer.Character
-		if char and char:FindFirstChild("HumanoidRootPart") then
-			char.HumanoidRootPart.CFrame = cf
-		end
-	end)
-	btn.Visible = false
-	table.insert(teleportList, btn)
-end
-
--- 关闭脚本
-createButton("关闭脚本", function()
-	ScreenGui:Destroy()
-end)
-
-print("[五月] 加载完成 — 点击悬浮球打开菜单")
+local tele
