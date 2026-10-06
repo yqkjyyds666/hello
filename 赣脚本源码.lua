@@ -191,7 +191,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 60)
 title.Position = UDim2.new(0, 0, 0, 30)
 title.BackgroundTransparency = 1
-title.Text = "赣脚本V2"
+title.Text = "五月脚本"
 title.TextColor3 = Color3.fromRGB(0, 220, 255)
 title.Font = Enum.Font.Gotham
 title.TextSize = 42
@@ -257,22 +257,17 @@ end
 -- ============================================================
 
 local library = loadstring(game:HttpGet("https://pastebin.com/raw/3vQbADjh", true))()
-local window = library:new("赣脚本V2")
+local window = library:new("五月很帅")
 
 ------------------------------------------------------------
 --  关于
 ------------------------------------------------------------
 local creds = window:Tab("关于", "")
 local bin = creds:section("信息", true)
-bin:Label("半缝合")
 bin:Label("五月制作最新版本")
-bin:Label("")
-bin:Label("")
 bin:Label("感谢支持我")
 bin:Label("会努力更新的")
 bin:Label("也感谢帮我的人")
-bin:Label("作者")
-bin:Label("")
 
 local credits = creds:section("UI设置", true)
 
