@@ -257,7 +257,7 @@ end
 -- ============================================================
 
 local library = loadstring(game:HttpGet("https://pastebin.com/raw/3vQbADjh", true))()
-local window = library:new("五月很帅")
+local window = library:new("赣脚本V2")
 
 ------------------------------------------------------------
 --  关于
@@ -750,7 +750,7 @@ end)
 
 -- 怪物透视
 local monsterEvent = nil
-tab:Toggle("怪物透视", false, function(bool)
+tab:Toggle("怪物透视", "MonsterESP", false, function(bool)
     if bool then
         local runService = game:GetService("RunService")
         monsterEvent = runService.RenderStepped:Connect(function()
@@ -781,7 +781,7 @@ end)
 
 -- 物品透视
 local itemEvent = nil
-tab:Toggle("物品透视", false, function(bool)
+tab:Toggle("物品透视", "ItemESP", false, function(bool)
     if bool then
         local runService = game:GetService("RunService")
         itemEvent = runService.RenderStepped:Connect(function()
