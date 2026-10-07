@@ -140,13 +140,9 @@ end
 local musicSound = nil
 task.spawn(function()
     local ok, err = pcall(function()
-        local music = game:HttpGet("https://raw.githubusercontent.com/renlua/music/refs/heads/main/%E8%B5%B7%E9%A3%8E%E4%BA%86.mp3")
-        writefile("music.mp3", music)
-        local Getmusic = getsynasset("music.mp3")
-
         musicSound = Instance.new("Sound")
         musicSound.Name = "MayMusic"
-        musicSound.SoundId = Getmusic
+        musicSound.SoundId = "rbxassetid://1837879082"
         musicSound.Volume = 1
         musicSound.Looped = false
         musicSound.Parent = SoundService
@@ -723,7 +719,6 @@ end)
 local creds = window:Tab("彩虹朋友", "6035145364")
 local tab = creds:section("彩虹朋友功能", true)
 
--- 自动收集
 tab:Button("自动收集", function()
     local attempts = 0
     for i, v in pairs(game:GetService("Workspace"):GetChildren()) do
@@ -736,7 +731,6 @@ tab:Button("自动收集", function()
     end
 end)
 
--- 自动放置
 tab:Button("自动放置", function()
     local trigger = game:GetService("Workspace").GroupBuildStructures:FindFirstChild("Trigger", true)
     if trigger then
@@ -748,7 +742,6 @@ tab:Button("自动放置", function()
     end
 end)
 
--- 怪物透视
 local monsterEvent = nil
 tab:Toggle("怪物透视", "MonsterESP", false, function(bool)
     if bool then
@@ -779,7 +772,6 @@ tab:Toggle("怪物透视", "MonsterESP", false, function(bool)
     end
 end)
 
--- 物品透视
 local itemEvent = nil
 tab:Toggle("物品透视", "ItemESP", false, function(bool)
     if bool then
